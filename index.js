@@ -37,6 +37,7 @@ async function run () {
         const productsCollection = client.db('lukas-carParts').collection('products');
         const ordersCollection = client.db('lukas-carParts').collection('orders');
         const usersCollection = client.db('lukas-carParts').collection('users');
+        const reviewsCollection = client.db('lukas-carParts').collection('reviews');
 
         app.get('/products', async(req, res) => {
             const products = await productsCollection.find({}).toArray();
@@ -91,6 +92,18 @@ async function run () {
           const result = await usersCollection.updateOne(filter, updateDoc, options);
           const token = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
           res.send({result, token})
+        })
+
+        //api for reviews
+        app.post('/review', async(req, res) => {
+          const data = req.body;
+          const result = await reviewsCollection.insertOne(data);
+          res.send(result)
+        })
+        
+        app.get('/review', async(req, res) => {
+          const result = await reviewsCollection.find({}).toArray();
+          res.send(result)
         })
     }
     catch{
