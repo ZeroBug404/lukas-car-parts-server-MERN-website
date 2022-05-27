@@ -37,6 +37,7 @@ async function run () {
         const productsCollection = client.db('lukas-carParts').collection('products');
         const ordersCollection = client.db('lukas-carParts').collection('orders');
         const usersCollection = client.db('lukas-carParts').collection('users');
+        const usersDetailCollection = client.db('lukas-carParts').collection('usersDetail');
         const reviewsCollection = client.db('lukas-carParts').collection('reviews');
 
         app.get('/products', async(req, res) => {
@@ -78,10 +79,23 @@ async function run () {
           res.send(order)
         })
 
-
-
-        //users api
+        //user api
         app.put('/users/:email', async(req, res) => {
+          const email = req.params.email;
+          const userDetail = req.body;
+          const filter = {email: email};
+          const options = { upsert: true };
+          const updateDoc = {
+            $set: userDetail
+          };
+          const result = await usersCollection.updateOne(filter, updateDoc, options);
+          const token = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+          res.send({result, token})
+        })
+
+
+        ///user detail api
+        app.put('/usersDetail/:email', async(req, res) => {
           const email = req.params.email;
           const user = req.body;
           const filter = {email: email};
@@ -89,10 +103,18 @@ async function run () {
           const updateDoc = {
             $set: user
           };
-          const result = await usersCollection.updateOne(filter, updateDoc, options);
-          const token = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
-          res.send({result, token})
+          const result = await usersDetailCollection.updateOne(filter, updateDoc, options);
+          res.send(result)
         })
+
+        app.get('/usersDetail/:email', async(req, res) => {
+          const email = req.params.email;
+          const query = {email: email}
+          const result = await usersDetailCollection.findOne(query)
+          res.send(result)
+        })
+
+        
 
         //api for reviews
         app.post('/review', async(req, res) => {
