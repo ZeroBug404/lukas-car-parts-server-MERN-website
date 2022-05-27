@@ -127,6 +127,12 @@ async function run () {
           const result = await reviewsCollection.find({}).toArray();
           res.send(result)
         })
+
+        //api for admin page
+        app.get('/users', async(req, res) => {
+          const users = await usersCollection.find({}).toArray();
+          res.send(users)
+        })
     }
     catch{
         // await client.close();
@@ -135,7 +141,7 @@ async function run () {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello From Lukas!')
 })
 
 app.listen(port, () => {
