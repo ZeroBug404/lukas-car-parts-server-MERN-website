@@ -173,6 +173,15 @@ async function run() {
         res.status(403).send({ message: "Forbidden acccess" });
       }
     });
+
+
+    //api to add new product by admin
+    app.post('/products', async(req, res) => {
+      const data = req.body;
+      const result = await productsCollection.insertOne(data);
+      res.send(result);
+    })
+
   } catch {
     // await client.close();
   }
