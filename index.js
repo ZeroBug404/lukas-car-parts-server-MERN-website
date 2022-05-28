@@ -7,7 +7,21 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { request } = require("express");
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+const corsConfig = {
+  origin: "*",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use(cors(corsConfig));
+app.options("*", cors(corsConfig));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept,authorization"
+  );
+  next();
+});
 app.use(express.json());
 
 function verifyJWT(req, res, next) {
@@ -148,12 +162,12 @@ async function run() {
       res.send(users);
     });
 
-    app.get('/admin/:email', verifyJWT, async(req, res) => {
+    app.get("/admin/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
-      const user = await usersCollection.findOne({email: email});
-      const isAdmin = user.role === 'admin';
-      res.send({admin: isAdmin})
-    })
+      const user = await usersCollection.findOne({ email: email });
+      const isAdmin = user.role === "admin";
+      res.send({ admin: isAdmin });
+    });
 
     app.put("/users/admin/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
@@ -168,19 +182,17 @@ async function run() {
         };
         const result = await usersCollection.updateOne(filter, updateDoc);
         res.send(result);
-      }
-      else{
+      } else {
         res.status(403).send({ message: "Forbidden acccess" });
       }
     });
 
     //api to add new product by admin
-    app.post('/products', async(req, res) => {
+    app.post("/products", async (req, res) => {
       const data = req.body;
       const result = await productsCollection.insertOne(data);
       res.send(result);
-    })
-
+    });
 
     //api to manage(delete) products by admin
     app.get("/products", async (req, res) => {
@@ -195,13 +207,11 @@ async function run() {
       res.send(products);
     });
 
-
     //api to manage all orders
-    app.get('/orders', async(req, res) => {
-      const result = await ordersCollection.find({}).toArray()
-      res.send(result)
-    })
-
+    app.get("/orders", async (req, res) => {
+      const result = await ordersCollection.find({}).toArray();
+      res.send(result);
+    });
   } catch {
     // await client.close();
   }
