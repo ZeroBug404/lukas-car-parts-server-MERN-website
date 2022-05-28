@@ -184,7 +184,7 @@ async function run() {
 
     //api to manage(delete) products by admin
     app.get("/products", async (req, res) => {
-      const products = await productsCollection.find().toArray();
+      const products = await productsCollection.find({}).toArray();
       res.send(products);
     });
 
@@ -194,6 +194,13 @@ async function run() {
       const products = await productsCollection.deleteOne(filter);
       res.send(products);
     });
+
+
+    //api to manage all orders
+    app.get('/orders', async(req, res) => {
+      const result = await ordersCollection.find({}).toArray()
+      res.send(result)
+    })
 
   } catch {
     // await client.close();
