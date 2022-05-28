@@ -174,13 +174,26 @@ async function run() {
       }
     });
 
-
     //api to add new product by admin
     app.post('/products', async(req, res) => {
       const data = req.body;
       const result = await productsCollection.insertOne(data);
       res.send(result);
     })
+
+
+    //api to manage(delete) products by admin
+    app.get("/products", async (req, res) => {
+      const products = await productsCollection.find().toArray();
+      res.send(products);
+    });
+
+    app.delete("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const products = await productsCollection.deleteOne(filter);
+      res.send(products);
+    });
 
   } catch {
     // await client.close();
