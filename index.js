@@ -1,11 +1,11 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { request } = require("express");
-const port = process.env.PORT || 5000;
+// const express = require("express");
+// const app = express();
+// const cors = require("cors");
+// require("dotenv").config();
+// const jwt = require("jsonwebtoken");
+// const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+// const { request } = require("express");
+// const port = process.env.PORT || 5000;
 
 const corsConfig = {
   origin: "*",
